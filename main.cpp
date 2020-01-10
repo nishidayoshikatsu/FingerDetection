@@ -1,32 +1,28 @@
 #include "opencv2/opencv.hpp"
 
+using namespace cv;
+
 int main(int argh, char* argv[])
 {
-    cv::VideoCapture cap(0);//デバイスのオープン
+    VideoCapture cap(0);//デバイスのオープン
 
     if(!cap.isOpened())//カメラデバイスが正常にオープンしたか確認．
     {
         return -1;
     }
 
-    cv::Mat frame; //取得したフレーム
+    Mat frame; //取得したフレーム
     while(cap.read(frame))//無限ループ
     {
-        //
-        //取得したフレーム画像に対して，クレースケール変換や2値化などの処理を書き込む．
-        //
-		frame
-
-        cv::imshow("win", frame);//画像を表示．
-        const int key = cv::waitKey(1);
-        if(key == 'q'/*113*/)//qボタンが押されたとき
-        {
-            break;//whileループから抜ける．
+		//frame = masking(frame);
+		line(frame, Point(100, 300), Point(400, 300), Scalar(255,0,0), 10, CV_AA);
+        imshow("win", frame);//画像を表示．
+        const int key = waitKey(1);
+        if(key == 'q'/*113*/){
+            break;
         }
-        else if(key == 's'/*115*/)//sが押されたとき
-        {
-            //フレーム画像を保存する．
-            cv::imwrite("img.png", frame);
+        else if(key == 's'/*115*/){
+            imwrite("img.png", frame);
         }
     }
     cv::destroyAllWindows();
