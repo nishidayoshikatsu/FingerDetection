@@ -16,7 +16,7 @@ using namespace cv;
 #define NICHIKA 50	/* 二値化の閾値 */
 
 #define CLOSING 2	/* クロージングの回数 */
-#define OPENING 10	/* オープニングの回数 */
+#define OPENING 2	/* オープニングの回数 */
 
 #define BOUTYOU 2	/* 膨張処理回数 */
 
@@ -32,3 +32,5 @@ int Filter(Mat frame_gray, int x, int y, int Oper[]);
 Mat sikaku_kuro(Mat frame_gray, int x, int y);
 Mat sikaku_siro(Mat frame_gray, int x, int y);
 Mat Filter_laplacian(Mat, Mat);
+
+Mat CalcGravity(Mat);

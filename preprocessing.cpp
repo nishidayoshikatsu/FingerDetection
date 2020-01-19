@@ -87,6 +87,36 @@ Mat GenerateMask(Mat frame){
 	return frame_out;
 }
 
+Mat CalcGravity(Mat frame) {
+	int sx = 0;
+	int sy = 0;
+	int mm = 0;
+	int width = frame.cols;
+	int height = frame.rows;
+
+	int x, y;
+	float gpx, gpy;
+
+	for (int y = 0; y < height; y++){
+		for (int x = 0; x < width; x++){
+			if (frame.at<unsigned char>(y, x) == 255) {
+				sx += (float)x;
+				sy += (float)y;
+				++mm;
+			}
+		}
+	}
+
+	gpx = (float)sx/(float)mm;
+	gpy = (float)sy/(float)mm;
+	printf( "Total = %d, Gravity Center( x, y) = %f, %f\n", mm, gpx, gpy );
+
+	// 画像，円の中心座標，半径，色，線太さ，種類
+	circle(frame, Point((int)gpx, (int)gpy), 10, 100, 3, 4);
+
+	return frame;
+}
+
 Mat Sikisou_tyuusyutu(Mat frame, Mat frame_out, int down1, int down2){
 	int x, y;
 	int d1 = down1, d2 = down2;
