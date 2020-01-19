@@ -25,7 +25,7 @@ int main(int argh, char* argv[])
     while(cap.read(frame))//無限ループ
     {
 		frame_out = main_process(frame);
-		printf("幅:%d, 高さ%d\n", frame.cols, frame.rows);
+		//printf("幅:%d, 高さ%d\n", frame.cols, frame.rows);
 		//cvtColor(frame, frame_out, CV_BGR2GRAY);
 		//paper = frame;
 		//Mat dst = Mat::ones(frame.rows, frame.cols, CV_8U);
@@ -33,9 +33,12 @@ int main(int argh, char* argv[])
 		//resize(paper, dst, dst.size(), INTER_CUBIC);
 		//paper = scale(paper, dst, (double)dst.rows/frame.rows, (double)dst.cols/frame.cols);
 		rectangle(frame, rect, Scalar(0, 0, 255), 3, cv::LINE_4);
-		
+
 		imshow("Rock Paper Scissors Origin", frame);
 		imshow("Rock Paper Scissors", frame_out);
+
+		frame_out = LaplacianFilter(frame_out, 3);
+		imshow("Rock Paper Scissorsw", frame_out);
 		//imshow("Paper", paper);
 
         const int key = waitKey(1);
@@ -77,6 +80,18 @@ Mat main_process(Mat frame){
 	//cvtColor(frame, hsv_img, CV_BGR2HSV);
 	//inRange(hsv_img, MIN_HSVCOLOR, MAX_HSVCOLOR, msk_img);
 	frame_gray = GenerateMask(frame);
+
+	//frame_gray = closing(frame_gray, CLOSING);
+	//frame_gray = opening(frame_gray, OPENING);
+	cv::erode(frame_gray, frame_gray, cv::Mat(), cv::Point(-1,-1), 2); // 収縮
+	cv::dilate(frame_gray, frame_gray, cv::Mat(), cv::Point(-1,-1), 5); // 膨張
+
+	frame_gray = CalcGravity(frame_gray);
+
+	//frame_gray = LaplacianFilter(frame_gray, 3);
+
+	//frame_gray2 = frame_gray;
+	//frame_gray = Filter_laplacian(frame_gray, frame_gray2);
 
 	return frame_gray;
 }

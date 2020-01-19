@@ -109,13 +109,81 @@ Mat CalcGravity(Mat frame) {
 
 	gpx = (float)sx/(float)mm;
 	gpy = (float)sy/(float)mm;
-	printf( "Total = %d, Gravity Center( x, y) = %f, %f\n", mm, gpx, gpy );
+	//printf( "Total = %d, Gravity Center( x, y) = %f, %f\n", mm, gpx, gpy );
+	printf("幅:%d, 高さ:%d\n", frame.rows, frame.cols);
 
 	// 画像，円の中心座標，半径，色，線太さ，種類
 	circle(frame, Point((int)gpx, (int)gpy), 10, 100, 3, 4);
 
 	return frame;
 }
+
+Mat LaplacianFilter(Mat img, int kernel_size){
+	int height = img.rows;
+	int width = img.cols;
+	int channel = img.channels();
+
+	Mat out = cv::Mat::zeros(height, width, CV_8UC1);
+
+	double kernel[kernel_size][kernel_size] = {{0, 1, 0}, {1, -4, 1}, {0, 1, 0}};
+
+	int pad = floor(kernel_size / 2);
+
+	double v = 0;
+
+	for (int y = 0; y < height; y++){
+    	for (int x = 0; x < width; x++){
+      		v = 0;
+      		for (int dy = -pad; dy < pad + 1; dy++){
+        		for (int dx = -pad; dx < pad + 1; dx++){
+          			if (((y + dy) >= 0) && (( x + dx) >= 0) && ((y + dy) < height) && ((x + dx) < width)){
+            			v += img.at<uchar>(y + dy, x + dx) * kernel[dy + pad][dx + pad];
+          			}
+        		}
+      		}
+      		v = fmax(v, 0);
+      		v = fmin(v, 255);
+      		out.at<uchar>(y, x) = (uchar)v;
+    	}
+	}
+
+	return out;
+}
+
+/*Mat CornerDetect(Mat frame) {
+	int width = frame.cols;
+	int height = frame.rows;
+
+		sobely = np.array(((1, 2, 1),
+						(0, 0, 0),
+						(-1, -2, -1)), dtype=np.float32)
+
+		sobelx = np.array(((1, 0, -1),
+						(2, 0, -2),
+						(1, 0, -1)), dtype=np.float32)
+
+		# padding
+		tmp = np.pad(gray, (1, 1), 'edge')
+
+	Mat Ix = Mat::zeros(Size(frame.cols, frame.rows), CV_8UC1);
+	Mat Iy = Mat::zeros(Size(frame.cols, frame.rows), CV_8UC1);
+
+	for (int y = 0; y < height; y++){
+		for (int x = 0; x < width; x++){
+
+		for y in range(H):
+			for x in range(W):
+				Ix[y, x] = np.mean(tmp[y : y  + 3, x : x + 3] * sobelx)
+				Iy[y, x] = np.mean(tmp[y : y + 3, x : x + 3] * sobely)
+			
+		Ix2 = Ix ** 2
+		Iy2 = Iy ** 2
+		Ixy = Ix * Iy
+
+		return Ix2, Iy2, Ixy
+}*/
+
+
 
 Mat Sikisou_tyuusyutu(Mat frame, Mat frame_out, int down1, int down2){
 	int x, y;

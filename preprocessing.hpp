@@ -34,3 +34,4 @@ Mat sikaku_siro(Mat frame_gray, int x, int y);
 Mat Filter_laplacian(Mat, Mat);
 
 Mat CalcGravity(Mat);
+Mat LaplacianFilter(Mat img, int kernel_size);
