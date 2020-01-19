@@ -3,6 +3,47 @@
 
 using namespace cv;
 
+Mat RGBtoHSV(Mat img){
+	int width = img.cols;
+	int height = img.rows;
+	float r, g, b;
+	float h, s, v;
+	float _max, _min;
+
+	Mat hsv = Mat::zeros(height, width, CV_32FC3);
+
+	for (int y = 0; y < height; y++){
+		for (int x = 0; x < width; x++){
+			r = (float)img.at<Vec3b>(y, x)[2] / 255;
+			g = (float)img.at<Vec3b>(y, x)[1] / 255;
+			b = (float)img.at<Vec3b>(y, x)[0] / 255;
+
+			_max = fmax(r, fmax(g, b));
+			_min = fmin(r, fmin(g, b));
+
+			if(_max == _min){
+				h = 0;
+			} else if (_min == b) {
+				h = 60 * (g - r) / (_max - _min) + 60;
+			} else if (_min == r) {
+				h = 60 * (b - g) / (_max - _min) + 180;
+			} else if (_min == g) {
+				h = 60 * (r - b) / (_max - _min) + 300;
+			}
+
+			s = _max - _min;
+
+			v = _max;
+
+			hsv.at<Vec3f>(y, x)[0] = h;
+			hsv.at<Vec3f>(y, x)[1] = s;
+			hsv.at<Vec3f>(y, x)[2] = v;
+		}
+	}
+
+	return hsv;
+}
+
 Mat RGBtoGray(Mat frame) {
 	Mat frame_gray = Mat::zeros(Size(frame.cols, frame.rows), CV_8UC1);
 
@@ -16,6 +57,34 @@ Mat RGBtoGray(Mat frame) {
     }
 
 	return frame_gray;
+}
+
+Mat GenerateMask(Mat frame){
+	//#define MIN_HSVCOLOR cv::Scalar(0, 60, 80)
+	//#define MAX_HSVCOLOR cv::Scalar(10, 160, 240)
+	Mat frame_out = Mat::zeros(Size(frame.cols, frame.rows), CV_8UC1);
+
+	int width = frame.cols;
+	int height = frame.rows;
+
+	float h, s, v;
+
+	for (int y = 0; y < height; y++){
+		for (int x = 0; x < width; x++){
+			if(y >= 60 && y<=420 && x >=140 && x <=500){
+				h = frame.at<Vec3f>(y, x)[0];
+				s = frame.at<Vec3f>(y, x)[1];
+				v = frame.at<Vec3f>(y, x)[2];
+
+				//if(h >= 0 && h <= 10 && s >= 60 && s <= 160 && v >= 80 && v <= 240){
+				if(h <= 50){
+					frame_out.at<unsigned char>(y, x) = 255;
+				}
+			}
+		}
+	}
+
+	return frame_out;
 }
 
 Mat Sikisou_tyuusyutu(Mat frame, Mat frame_out, int down1, int down2){

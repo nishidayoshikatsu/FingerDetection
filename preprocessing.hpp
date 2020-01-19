@@ -8,6 +8,11 @@ using namespace cv;
 #define KIDO1 40	/* 輝度値の閾値 */
 #define KIDO2 140
 
+//#define MIN_HSVCOLOR Scalar(0, 60, 80)
+//#define MAX_HSVCOLOR Scalar(10, 160, 240)
+#define MIN_HSVCOLOR Scalar(0, 10, 0)
+#define MAX_HSVCOLOR Scalar(50, 180, 255)
+
 #define NICHIKA 50	/* 二値化の閾値 */
 
 #define CLOSING 2	/* クロージングの回数 */
@@ -15,7 +20,8 @@ using namespace cv;
 
 #define BOUTYOU 2	/* 膨張処理回数 */
 
-Mat main_process(Mat);
+Mat RGBtoHSV(Mat);
+Mat GenerateMask(Mat);
 Mat RGBtoGray(Mat);
 Mat Sikisou_tyuusyutu(Mat, Mat, int, int);
 Mat kido_tyuusyutu(Mat, Mat, int, int);
