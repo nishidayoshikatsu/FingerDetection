@@ -3,12 +3,16 @@
 
 using namespace cv;
 
+Mat paper = imread("../img/pa.png", 1);
+Mat rock = imread("../img/gu.png", 1);
+Mat scissors = imread("../img/chiki.png", 1);
+
 void RockPaperScisors(unsigned int player) {
-	Mat paper = imread("./input/paper_sample.jpg", 1);
 
 	switch(player){
 		case 0:
 			printf("Rock\n");
+			imshow("Rock", rock);
 			break;
 		case 1:
 			printf("Paper\n");

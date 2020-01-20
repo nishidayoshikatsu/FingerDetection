@@ -21,7 +21,6 @@ int main(int argh, char* argv[])
 	//int *gpx;
 	//int *gpy;
 	//printf("start");
-	//Mat paper = imread("./input/paper_sample.jpg", 0);
 	//printf("finish");
     while(cap.read(frame))//無限ループ
     {
@@ -30,6 +29,10 @@ int main(int argh, char* argv[])
 		//cvtColor(frame, frame_out, CV_BGR2GRAY);
 		//paper = frame;
 		//Mat dst = Mat::ones(frame.rows, frame.cols, CV_8U);
+		/*if(!paper.data) {
+			fprintf(stderr, "no image\n");
+			return -1;
+		}*/
 
 		//resize(paper, dst, dst.size(), INTER_CUBIC);
 		//paper = scale(paper, dst, (double)dst.rows/frame.rows, (double)dst.cols/frame.cols);
@@ -40,7 +43,8 @@ int main(int argh, char* argv[])
 
 		frame_out = LaplacianFilter(frame_out, 3);
 		imshow("Rock Paper Scissorsw", frame_out);
-		//imshow("Paper", paper);
+
+		RockPaperScisors(0);
 
         const int key = waitKey(1);
         if(key == 'q'/*113*/){
