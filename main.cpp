@@ -5,8 +5,6 @@
 using namespace cv;
 
 Mat main_process(Mat);
-Mat scale(Mat frame, Mat frame_out, double rx, double ry);
-
 
 int main(int argh, char* argv[])
 {
@@ -92,34 +90,15 @@ Mat main_process(Mat frame){
 	cv::dilate(frame_gray, frame_gray, cv::Mat(), cv::Point(-1,-1), 5); // 膨張
 
 	CalcGravity(frame_gray, x);
-	printf("gpx:%f, gpy:%f\n", x[0], x[1]);
-	circle(frame, Point(x[0], x[1]), 10, 100, 3, 4);
+	printf("gpx:%d, gpy:%d\n", (int)x[0], (int)x[1]);
+	circle(frame_gray, Point((int)x[0], (int)x[1]), 10, 100, 3, 4);
 
 	//frame_gray = LaplacianFilter(frame_gray, 3);
 
 	//frame_gray2 = frame_gray;
 	//frame_gray = Filter_laplacian(frame_gray, frame_gray2);
 
-	frame_gray = DetectFinger(frame_gray, gpx, gpy);
+	frame_gray = DetectFinger(frame_gray, x);
 
 	return frame_gray;
-}
-
-Mat scale(Mat frame, Mat frame_out, double rx, double ry){
-	frame = RGBtoGray(frame);
-	//printf("%d\t%d\n", img_in->cols, img_in->rows);
-	//printf("%lf\t%lf\n", img_in->cols * rx, img_in->rows * ry);
-
-	int X, Y;
-
-	for(int y=0; y<frame_out.rows; y++){
-		for(int x=0; x<frame_out.cols; x++){
-			X = (int)(x / rx);
-			Y = (int)(y / ry);
-
-			frame_out.at<unsigned char>(y,x) = frame.at<unsigned char>(Y,X);
-		}
-	}
-
-	return frame_out;
 }

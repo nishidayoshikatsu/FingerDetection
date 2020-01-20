@@ -148,7 +148,7 @@ Mat LaplacianFilter(Mat img, int kernel_size){
 	return out;
 }
 
-Mat DetectFinger(Mat frame, int gpx, int gpy) {
+Mat DetectFinger(Mat frame, float* gp) {
 	int height = frame.rows;
 	int width = frame.cols;
 	int cnt = 0;
@@ -179,8 +179,9 @@ Mat DetectFinger(Mat frame, int gpx, int gpy) {
 
 				if(cnt == 21 && sqrt(pow(y-pre_y,2) +pow(x-pre_x,2)) >= 40){
 					//printf("%f\n", sqrt(pow(y-*gpy,2) +pow(x-*gpx,2)));
-					if(sqrt(pow(y-gpy,2) +pow(x-gpx,2)) >= 100){
+					if(sqrt(pow(y-*(gp+1),2) +pow(x-*gp,2)) >= 100){
 						circle(frame, Point((int)x, (int)y), 3, 100, 3, 4);
+						line(frame, Point((int)*gp, (int)*(gp+1)), Point((int)x, (int)y), 100, 3, 4); 
 						finger_cnt++;
 						pre_y = y;
 						pre_x = x;

@@ -40,4 +40,4 @@ Mat Filter_laplacian(Mat, Mat);
 void CalcGravity(Mat, float*);
 Mat LaplacianFilter(Mat img, int kernel_size);
 
-Mat DetectFinger(Mat, int, int);
+Mat DetectFinger(Mat, float*);
