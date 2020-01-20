@@ -169,15 +169,17 @@ Mat DetectFinger(Mat frame, float* gp) {
 			};
 
 			if(cor[3][3] == 255){
-				for(int i=0;i<3;i++){
+
+				for(int i=0;i<4;i++){
 					for(int j=0;j<7;j++){
+						if(i == 3 && j == 3)	continue;
 						if(cor[i][j] == 0){
 							cnt++;
 						}
 					}
 				}
 
-				if(cnt == 21 && sqrt(pow(y-pre_y,2) +pow(x-pre_x,2)) >= 40){
+				if(cnt == 26 && sqrt(pow(y-pre_y,2) +pow(x-pre_x,2)) >= 40){
 					//printf("%f\n", sqrt(pow(y-*gpy,2) +pow(x-*gpx,2)));
 					if(sqrt(pow(y-*(gp+1),2) +pow(x-*gp,2)) >= 100){
 						circle(frame, Point((int)x, (int)y), 3, 100, 3, 4);
