@@ -1,6 +1,6 @@
 #include "opencv2/opencv.hpp"
 #include "preprocessing.hpp"
-//#include "cpu.hpp"
+#include "cpu.hpp"
 
 using namespace cv;
 
@@ -16,7 +16,7 @@ int main(int argh, char* argv[])
     }
 
     Mat frame;
-	Mat frame_out;
+	Mat frame_out, frame_out2;
 	Rect rect(140, 60, 360, 360);	//x,y, width, height
 	//int *gpx;
 	//int *gpy;
@@ -41,17 +41,19 @@ int main(int argh, char* argv[])
 		imshow("Rock Paper Scissors Origin", frame);
 		imshow("Rock Paper Scissors", frame_out);
 
-		frame_out = LaplacianFilter(frame_out, 3);
-		imshow("Rock Paper Scissorsw", frame_out);
+		frame_out2 = LaplacianFilter(frame_out, 3);
+		imshow("Rock Paper Scissorsw", frame_out2);
 
-		RockPaperScisors(0);
+		//RockPaperScisors(0);
 
         const int key = waitKey(1);
         if(key == 'q'/*113*/){
             break;
         }
         else if(key == 's'/*115*/){
-            imwrite("img.png", frame_out);
+            imwrite("img_origin.png", frame);
+			imwrite("img1.png", frame_out);
+			imwrite("img2.png", frame_out);
         }
     }
     destroyAllWindows();
