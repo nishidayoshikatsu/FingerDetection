@@ -88,6 +88,61 @@ Mat GenerateMask(Mat frame){
 	return frame_out;
 }
 
+Mat GaussianFilter(Mat img, double sigma, int kernel_size){
+  int height = img.rows;
+  int width = img.cols;
+  int channel = img.channels();
+
+  // prepare output
+  Mat out = Mat::zeros(height, width, CV_8UC3);
+
+  // prepare kernel
+  int pad = floor(kernel_size / 2);
+  int _x = 0, _y = 0;
+  double kernel_sum = 0;
+  
+  // get gaussian kernel
+  float kernel[kernel_size][kernel_size];
+
+  for (int y = 0; y < kernel_size; y++){
+    for (int x = 0; x < kernel_size; x++){
+      _y = y - pad;
+      _x = x - pad;
+      kernel[y][x] = 1 / (2 * M_PI * sigma * sigma) * exp( - (_x * _x + _y * _y) / (2 * sigma * sigma));
+      kernel_sum += kernel[y][x];
+    }
+  }
+
+  for (int y = 0; y < kernel_size; y++){
+    for (int x = 0; x < kernel_size; x++){
+      kernel[y][x] /= kernel_sum;
+    }
+  }
+
+
+  // filtering
+  double v = 0;
+  
+  for (int y = 0; y < height; y++){
+    for (int x = 0; x < width; x++){
+      for (int c = 0; c < channel; c++){
+
+      v = 0;
+
+      for (int dy = -pad; dy < pad + 1; dy++){
+        for (int dx = -pad; dx < pad + 1; dx++){
+          if (((x + dx) >= 0) && ((y + dy) >= 0)){
+            v += (double)img.at<cv::Vec3b>(y + dy, x + dx)[c] * kernel[dy + pad][dx + pad];
+          }
+        }
+      }
+      out.at<Vec3b>(y, x)[c] = v;
+      }
+    }
+  }
+  return out;
+}
+
 void CalcGravity(Mat frame, float *p) {
 	int sx = 0;
 	int sy = 0;
@@ -170,18 +225,18 @@ Mat DetectFinger(Mat frame, float* gp) {
 
 			if(cor[3][3] == 255){
 
-				for(int i=0;i<4;i++){
+				for(int i=0;i<3;i++){
 					for(int j=0;j<7;j++){
-						if(i == 3 && j == 3)	continue;
+						//if(i == 3 && j == 3)	continue;
 						if(cor[i][j] == 0){
 							cnt++;
 						}
 					}
 				}
 
-				if(cnt == 26 && sqrt(pow(y-pre_y,2) +pow(x-pre_x,2)) >= 40){
+				if(cnt >= 21 && sqrt(pow(y-pre_y,2) +pow(x-pre_x,2)) >= 50){
 					//printf("%f\n", sqrt(pow(y-*gpy,2) +pow(x-*gpx,2)));
-					if(sqrt(pow(y-*(gp+1),2) +pow(x-*gp,2)) >= 100){
+					if(sqrt(pow(y-*(gp+1),2) +pow(x-*gp,2)) >= 150){
 						circle(frame, Point((int)x, (int)y), 3, 100, 3, 4);
 						line(frame, Point((int)*gp, (int)*(gp+1)), Point((int)x, (int)y), 100, 3, 4); 
 						finger_cnt++;

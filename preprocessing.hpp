@@ -37,6 +37,8 @@ Mat sikaku_kuro(Mat frame_gray, int x, int y);
 Mat sikaku_siro(Mat frame_gray, int x, int y);
 Mat Filter_laplacian(Mat, Mat);
 
+Mat GaussianFilter(Mat img, double sigma, int kernel_size);
+
 void CalcGravity(Mat, float*);
 Mat LaplacianFilter(Mat img, int kernel_size);
 

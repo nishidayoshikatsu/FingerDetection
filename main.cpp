@@ -1,6 +1,6 @@
 #include "opencv2/opencv.hpp"
 #include "preprocessing.hpp"
-#include "cpu.hpp"
+//#include "cpu.hpp"
 
 using namespace cv;
 
@@ -76,6 +76,8 @@ Mat main_process(Mat frame){
 
 	//RockPaperScisors(1);
 	*/
+	frame = GaussianFilter(frame, 1.3, 3);
+
 	frame = RGBtoHSV(frame);
 
 	//Size ksize = cv::Size(5, 5);
