@@ -1,3 +1,4 @@
+#include <math.h>
 #include "opencv2/opencv.hpp"
 #include "preprocessing.hpp"
 
@@ -87,7 +88,7 @@ Mat GenerateMask(Mat frame){
 	return frame_out;
 }
 
-Mat CalcGravity(Mat frame) {
+void CalcGravity(Mat frame, float *p) {
 	int sx = 0;
 	int sy = 0;
 	int mm = 0;
@@ -109,13 +110,10 @@ Mat CalcGravity(Mat frame) {
 
 	gpx = (float)sx/(float)mm;
 	gpy = (float)sy/(float)mm;
-	//printf( "Total = %d, Gravity Center( x, y) = %f, %f\n", mm, gpx, gpy );
-	printf("幅:%d, 高さ:%d\n", frame.rows, frame.cols);
 
-	// 画像，円の中心座標，半径，色，線太さ，種類
-	circle(frame, Point((int)gpx, (int)gpy), 10, 100, 3, 4);
-
-	return frame;
+	*p = gpx;
+	p++;
+	*p = gpy;
 }
 
 Mat LaplacianFilter(Mat img, int kernel_size){
@@ -148,6 +146,92 @@ Mat LaplacianFilter(Mat img, int kernel_size){
 	}
 
 	return out;
+}
+
+Mat DetectFinger(Mat frame, int gpx, int gpy) {
+	int height = frame.rows;
+	int width = frame.cols;
+	int cnt = 0;
+	int pre_x = 0, pre_y = 0;
+	//int cor[7][7];
+	int finger_cnt = 0;
+
+	for (int y = 0+3; y < height-3; y++){
+		for (int x = 0+3; x < width-3; x++){
+			int cor[7][7] = {
+				{frame.at<unsigned char>(y-3, x-3), frame.at<unsigned char>(y-3, x-2), frame.at<unsigned char>(y-3, x-1), frame.at<unsigned char>(y-3, x), frame.at<unsigned char>(y-3, x+1), frame.at<unsigned char>(y-3, x+2), frame.at<unsigned char>(y-3, x+3)},
+				{frame.at<unsigned char>(y-2, x-3), frame.at<unsigned char>(y-2, x-2), frame.at<unsigned char>(y-2, x-1), frame.at<unsigned char>(y-2, x), frame.at<unsigned char>(y-2, x+1), frame.at<unsigned char>(y-2, x+2), frame.at<unsigned char>(y-2, x+3)},
+				{frame.at<unsigned char>(y-1, x-3), frame.at<unsigned char>(y-1, x-2), frame.at<unsigned char>(y-1, x-1), frame.at<unsigned char>(y-1, x), frame.at<unsigned char>(y-1, x+1), frame.at<unsigned char>(y-1, x+2), frame.at<unsigned char>(y-1, x+3)},
+				{frame.at<unsigned char>(y, x-3), frame.at<unsigned char>(y, x-2), frame.at<unsigned char>(y, x-1), frame.at<unsigned char>(y, x), frame.at<unsigned char>(y, x+1), frame.at<unsigned char>(y, x+2), frame.at<unsigned char>(y, x+3)},
+				{frame.at<unsigned char>(y+1, x-3), frame.at<unsigned char>(y+1, x-2), frame.at<unsigned char>(y+1, x-1), frame.at<unsigned char>(y+1, x), frame.at<unsigned char>(y+1, x+1), frame.at<unsigned char>(y+1, x+2), frame.at<unsigned char>(y+1, x+3)},
+				{frame.at<unsigned char>(y+2, x-3), frame.at<unsigned char>(y+2, x-2), frame.at<unsigned char>(y+2, x-1), frame.at<unsigned char>(y+2, x), frame.at<unsigned char>(y+2, x+1), frame.at<unsigned char>(y+2, x+2), frame.at<unsigned char>(y+2, x+3)},
+				{frame.at<unsigned char>(y+3, x-3), frame.at<unsigned char>(y+3, x-2), frame.at<unsigned char>(y+3, x-1), frame.at<unsigned char>(y+3, x), frame.at<unsigned char>(y+3, x+1), frame.at<unsigned char>(y+3, x+2), frame.at<unsigned char>(y+3, x+3)}
+			};
+
+			if(cor[3][3] == 255){
+				for(int i=0;i<3;i++){
+					for(int j=0;j<7;j++){
+						if(cor[i][j] == 0){
+							cnt++;
+						}
+					}
+				}
+
+				if(cnt == 21 && sqrt(pow(y-pre_y,2) +pow(x-pre_x,2)) >= 40){
+					//printf("%f\n", sqrt(pow(y-*gpy,2) +pow(x-*gpx,2)));
+					if(sqrt(pow(y-gpy,2) +pow(x-gpx,2)) >= 100){
+						circle(frame, Point((int)x, (int)y), 3, 100, 3, 4);
+						finger_cnt++;
+						pre_y = y;
+						pre_x = x;
+					}
+				}
+				cnt = 0;
+			}
+
+
+
+
+			/*if (frame.at<unsigned char>(y, x) == 255 && sqrt(pow(y-pre_y,2) +pow(x-pre_x,2)) >= 10) {
+				circle(frame, Point((int)x, (int)y), 3, 100, 3, 4);
+				pre_y = y;
+				pre_x = x;
+				cnt++;
+			}
+			if(cnt == 3)	return frame;*/
+		}
+	}
+
+	printf("finger count:%d\n", finger_cnt);
+
+	return frame;
+
+	/*int thresh = 200;
+	int max_thresh = 255;
+
+    int blockSize = 2;
+    int apertureSize = 3;
+    double k = 0.04;
+    Mat dst = Mat::zeros( frame.size(), CV_32FC1 );
+    cornerHarris( frame, dst, blockSize, apertureSize, k );
+    Mat dst_norm, dst_norm_scaled;
+    normalize( dst, dst_norm, 0, 255, NORM_MINMAX, CV_32FC1, Mat() );
+    convertScaleAbs( dst_norm, dst_norm_scaled );
+    for( int i = 0; i < dst_norm.rows ; i++ )
+    {
+        for( int j = 0; j < dst_norm.cols; j++ )
+        {
+            if( (int) dst_norm.at<float>(i,j) > thresh )
+            {
+                circle( dst_norm_scaled, Point(j,i), 5,  Scalar(0), 2, 8, 0 );
+            }
+        }
+    }*/
+    //namedWindow( corners_window );
+    //imshow( corners_window, dst_norm_scaled );
+
+
+	//return dst_norm_scaled;
 }
 
 /*Mat CornerDetect(Mat frame) {

@@ -7,6 +7,7 @@ using namespace cv;
 Mat main_process(Mat);
 Mat scale(Mat frame, Mat frame_out, double rx, double ry);
 
+
 int main(int argh, char* argv[])
 {
     VideoCapture cap(0);//デバイスのオープン
@@ -19,6 +20,8 @@ int main(int argh, char* argv[])
     Mat frame; //取得したフレーム
 	Mat frame_out;
 	Rect rect(140, 60, 360, 360);	//x,y, width, height
+	//int *gpx;
+	//int *gpy;
 	//printf("start");
 	//Mat paper = imread("./input/paper_sample.jpg", 0);
 	//printf("finish");
@@ -57,6 +60,8 @@ Mat main_process(Mat frame){
 	Mat frame_out = frame;
 	Mat frame_gray, frame_gray2;
 	Mat hsv_img, msk_img;
+	int gpx, gpy;
+	float x[] = {0.0, 0.0};
 
 	/*frame = Sikisou_tyuusyutu(frame, frame_out, SIKISOU1 , SIKISOU2);
 	frame_gray = RGBtoGray(frame);
@@ -86,12 +91,16 @@ Mat main_process(Mat frame){
 	cv::erode(frame_gray, frame_gray, cv::Mat(), cv::Point(-1,-1), 2); // 収縮
 	cv::dilate(frame_gray, frame_gray, cv::Mat(), cv::Point(-1,-1), 5); // 膨張
 
-	frame_gray = CalcGravity(frame_gray);
+	CalcGravity(frame_gray, x);
+	printf("gpx:%f, gpy:%f\n", x[0], x[1]);
+	circle(frame, Point(x[0], x[1]), 10, 100, 3, 4);
 
 	//frame_gray = LaplacianFilter(frame_gray, 3);
 
 	//frame_gray2 = frame_gray;
 	//frame_gray = Filter_laplacian(frame_gray, frame_gray2);
+
+	frame_gray = DetectFinger(frame_gray, gpx, gpy);
 
 	return frame_gray;
 }

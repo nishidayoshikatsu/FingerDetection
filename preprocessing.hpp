@@ -13,12 +13,16 @@ using namespace cv;
 #define MIN_HSVCOLOR Scalar(0, 10, 0)
 #define MAX_HSVCOLOR Scalar(50, 180, 255)
 
+
 #define NICHIKA 50	/* 二値化の閾値 */
 
 #define CLOSING 2	/* クロージングの回数 */
 #define OPENING 2	/* オープニングの回数 */
 
 #define BOUTYOU 2	/* 膨張処理回数 */
+
+//extern int grax = 0;
+//extern int gray = 0;
 
 Mat RGBtoHSV(Mat);
 Mat GenerateMask(Mat);
@@ -33,5 +37,7 @@ Mat sikaku_kuro(Mat frame_gray, int x, int y);
 Mat sikaku_siro(Mat frame_gray, int x, int y);
 Mat Filter_laplacian(Mat, Mat);
 
-Mat CalcGravity(Mat);
+void CalcGravity(Mat, float*);
 Mat LaplacianFilter(Mat img, int kernel_size);
+
+Mat DetectFinger(Mat, int, int);
