@@ -45,7 +45,8 @@ int main(int argh, char* argv[])
 		frame_out2 = LaplacianFilter(frame_out, 3);
 		imshow("Rock Paper Scissorsw", frame_out2);
 
-		//RockPaperScisors(0);
+		if(success[0] == 5)		RockPaperScisors(0);
+		if(success[0] == 2)		RockPaperScisors(2);
 
         const int key = waitKey(1);
         if(key == 'q'/*113*/){

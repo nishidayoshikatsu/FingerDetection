@@ -2,4 +2,6 @@
 
 using namespace cv;
 
-void RockPaperScisors(unsigned int);
+void RockPaperScisors(int);
+void CPU(int);
+void judge(int, int);
