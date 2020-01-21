@@ -27,4 +27,4 @@ Mat GaussianFilter(Mat img, double sigma, int kernel_size);
 void CalcGravity(Mat, float*);
 Mat LaplacianFilter(Mat img, int kernel_size);
 
-Mat DetectFinger(Mat, float*);
+Mat DetectFinger(Mat, float*, int*);

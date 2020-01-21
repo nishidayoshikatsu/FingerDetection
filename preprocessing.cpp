@@ -182,7 +182,7 @@ Mat LaplacianFilter(Mat img, int kernel_size){
 	return out;
 }
 
-Mat DetectFinger(Mat frame, float* gp) {
+Mat DetectFinger(Mat frame, float* gp, int* success) {
 	int height = frame.rows;
 	int width = frame.cols;
 	int cnt = 0;
@@ -226,6 +226,8 @@ Mat DetectFinger(Mat frame, float* gp) {
 			}
 		}
 	}
+
+	*success = finger_cnt;
 
 	printf("finger count:%d\n", finger_cnt);
 

@@ -4,7 +4,7 @@
 
 using namespace cv;
 
-Mat main_process(Mat);
+Mat main_process(Mat, int*);
 
 int main(int argh, char* argv[])
 {
@@ -18,13 +18,14 @@ int main(int argh, char* argv[])
     Mat frame;
 	Mat frame_out, frame_out2;
 	Rect rect(140, 60, 360, 360);	//x,y, width, height
+	int success[1] = {};
 	//int *gpx;
 	//int *gpy;
 	//printf("start");
 	//printf("finish");
     while(cap.read(frame))
     {
-		frame_out = main_process(frame);
+		frame_out = main_process(frame, success);
 		//printf("幅:%d, 高さ%d\n", frame.cols, frame.rows);
 		//cvtColor(frame, frame_out, CV_BGR2GRAY);
 		//paper = frame;
@@ -60,7 +61,7 @@ int main(int argh, char* argv[])
     return 0;
 }
 
-Mat main_process(Mat frame){
+Mat main_process(Mat frame, int* suceess){
 	Mat frame_gray;
 	float x[2] = {};
 
@@ -79,7 +80,7 @@ Mat main_process(Mat frame){
 	printf("gpx:%d, gpy:%d\n", (int)x[0], (int)x[1]);
 	circle(frame_gray, Point((int)x[0], (int)x[1]), 10, 100, 3, 4);
 
-	frame_gray = DetectFinger(frame_gray, x);
+	frame_gray = DetectFinger(frame_gray, x, suceess);
 
 	return frame_gray;
 }
