@@ -8,7 +8,7 @@ webカメラからリアルタイムで指を検出するためのリポジト�
 * Opencv
 
 
-## 実行方法
+# 実行方法
 
 ```
 git clone https://github.com/nishidayoshikatsu/FingerDetection.git
