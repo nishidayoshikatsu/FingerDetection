@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project( main )
-find_package( OpenCV REQUIRED )
+find_package(OpenCV REQUIRED)
+find_package(OpenMP REQUIRED)
 add_executable( main main.cpp preprocessing.cpp cpu.cpp)
-target_link_libraries( main ${OpenCV_LIBS} )
+target_link_libraries( main ${OpenCV_LIBS} ${OpenMP_CXX_FLAGS})

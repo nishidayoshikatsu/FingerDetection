@@ -1,4 +1,5 @@
 #include "opencv2/opencv.hpp"
+#include <omp.h>
 #include "preprocessing.hpp"
 #include "cpu.hpp"
 
@@ -25,6 +26,7 @@ int main(int argh, char* argv[])
 	//printf("finish");
     while(cap.read(frame))
     {
+		printf("使用可能な最大スレッド数：%d\n", omp_get_max_threads());
 		frame_out = main_process(frame, success);
 		//printf("幅:%d, 高さ%d\n", frame.cols, frame.rows);
 		//cvtColor(frame, frame_out, CV_BGR2GRAY);
@@ -42,8 +44,8 @@ int main(int argh, char* argv[])
 		imshow("Rock Paper Scissors Origin", frame);
 		imshow("Rock Paper Scissors", frame_out);
 
-		frame_out2 = LaplacianFilter(frame_out, 3);
-		imshow("Rock Paper Scissorsw", frame_out2);
+		//frame_out2 = LaplacianFilter(frame_out, 3);
+		//imshow("Rock Paper Scissorsw", frame_out2);
 
 		if(success[0] == 5)		RockPaperScisors(0);
 		if(success[0] == 2)		RockPaperScisors(2);

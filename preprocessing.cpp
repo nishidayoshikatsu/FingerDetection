@@ -1,4 +1,5 @@
 #include <math.h>
+#include <omp.h>
 #include "opencv2/opencv.hpp"
 #include "preprocessing.hpp"
 
@@ -86,6 +87,7 @@ Mat GaussianFilter(Mat img, double sigma, int kernel_size){
 
 	float kernel[kernel_size][kernel_size];
 
+	#pragma omp parallel for
 	for (int y = 0; y < kernel_size; y++){
 		for (int x = 0; x < kernel_size; x++){
 			_y = y - pad;
@@ -95,6 +97,7 @@ Mat GaussianFilter(Mat img, double sigma, int kernel_size){
 		}
 	}
 
+	#pragma omp parallel for
 	for (int y = 0; y < kernel_size; y++){
 		for (int x = 0; x < kernel_size; x++){
 			kernel[y][x] /= kernel_sum;
@@ -104,6 +107,7 @@ Mat GaussianFilter(Mat img, double sigma, int kernel_size){
 
 	double v = 0;
 
+	#pragma omp parallel for
 	for (int y = 0; y < height; y++){
 		for (int x = 0; x < width; x++){
 			for (int c = 0; c < channel; c++){
@@ -133,6 +137,7 @@ void CalcGravity(Mat frame, float *p) {
 	int x, y;
 	float gpx, gpy;
 
+	#pragma omp parallel for
 	for (int y = 0; y < height; y++){
 		for (int x = 0; x < width; x++){
 			if (frame.at<unsigned char>(y, x) == 255) {
@@ -189,6 +194,7 @@ Mat DetectFinger(Mat frame, float* gp, int* success) {
 	int pre_x = 0, pre_y = 0;
 	int finger_cnt = 0;
 
+	#pragma omp parallel for
 	for (int y = 0+3; y < height-3; y++){
 		for (int x = 0+3; x < width-3; x++){
 			int cor[7][7] = {
@@ -265,6 +271,7 @@ Mat syuusyuku(Mat frame_gray, int syori_num){
 	Mat frame_out = frame_gray;
 
 	do{
+				#pragma omp parallel for
                 for(y = 0; y < frame_gray.rows; y++){
                         for(x = 0; x < frame_gray.cols; x++){
                                 if(x > 10 && x < (frame_gray.cols - 11) && y > 10 && y < (frame_gray.rows - 11)){
@@ -301,6 +308,7 @@ Mat boutyou(Mat frame_gray, int syori_num){
 	Mat frame_out = frame_gray;
 
 	do{
+				#pragma omp parallel for
                 for(y = 0; y < frame_gray.rows; y++){
                         for(x = 0; x < frame_gray.cols; x++){
                                 if(x > 10 && x < (frame_gray.cols - 11) && y > 10 && y < (frame_gray.rows - 11)){
