@@ -11,7 +11,8 @@ webカメラからリアルタイムで指を検出するためのリポジト�
 # 実行方法
 
 ```
-git clone https://github.com/nishidayoshikatsu/FingerDetection.git
+git clone https://github.com/nishidayoshikatsu/RealtimeFingerDetection.git
+cd RealtimeFingerDetection/
 mkdir build
 cd build
 cmake ..
